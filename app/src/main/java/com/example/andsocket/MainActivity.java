@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements Runnable{
     EditText etMessage;
     @Bind(R.id.lvChat)
     ListView lvChat;
-    private static final String HOST = "119.124.30.115";
+    private static final String HOST = "119.124.30.111";
     private static final int PORT = 12345;
     private Socket socket = null;
     private ObjectOutputStream oos = null;
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements Runnable{
                 if (socket.isConnected()) {
                     //Log.i("AppData","socket isConnected send");
                     if (!socket.isInputShutdown()) {
+                        Log.i("AppData",ois.toString()+"  "+oos.toString());
                         Object obj = ois.readObject();
                         if (obj != null) {
                             ChatMessage message = (ChatMessage) obj;

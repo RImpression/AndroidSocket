@@ -36,17 +36,5 @@ public class ChatMessage implements Serializable{
         this.userName = userName;
     }
 
-    private void writeObject(java.io.ObjectOutputStream stream)
-            throws IOException {
-        stream.writeObject(userName);
-        stream.writeObject(msg);
-        stream.writeObject(type);
-    }
 
-    private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        userName = (String) stream.readObject();
-        msg = (String) stream.readObject();
-        type = (String) stream.readObject();
-    }
 }
