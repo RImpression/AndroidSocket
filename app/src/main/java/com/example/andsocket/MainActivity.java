@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements Runnable{
     EditText etMessage;
     @Bind(R.id.lvChat)
     ListView lvChat;
-    private static final String HOST = "119.124.18.74";
+    private static final String HOST = "183.35.235.200";
     private static final int PORT = 12345;
     private Socket socket = null;
     private ObjectOutputStream oos = null;
@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements Runnable{
     private String content = "";
     private ArrayList<ChatMessage> messageList = null;
     private ChatAdapter chatAdapter;
+    private ChatMessage message = null;
+    private ChatMessage messageGET = null;
+    private Object obj = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements Runnable{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         messageList = new ArrayList<>();
+        message = new ChatMessage();
+        message.setUserName("RIM");
+        message.setType("OUTPUT");
 
 
         new Thread() {
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements Runnable{
                 String msg = etMessage.getText().toString();
                 etMessage.setText("");
                 if(msg == "bye") {
-                    sendMessage("XXX leave the group");
+                    sendMessage(message.getUserName() + " 离开讨论组");
                 } else {
                     sendMessage(msg);
                 }
@@ -73,16 +79,13 @@ public class MainActivity extends AppCompatActivity implements Runnable{
     }
 
     private void sendMessage(String msg) {
-            ChatMessage message = new ChatMessage();
-            message.setUserName("RIM");
             message.setMsg(msg);
-            message.setType("OUTPUT");
             //notifyListData(message);
             if (socket.isConnected()) {
                 //Log.i("AppData","socket isConnected");
                 if (!socket.isOutputShutdown()) {
                     try {
-                        Log.i("AppData",message.getMsg());
+                        Log.i("AppData","发送消息 "+message.getMsg());
                         oos.writeObject(message);
                         oos.flush();
                     } catch (IOException e) {
@@ -116,18 +119,17 @@ public class MainActivity extends AppCompatActivity implements Runnable{
     public void run() {
         try {
             Thread.sleep(1000);
-            //sendMessage("XX enter the group");
+            sendMessage(message.getUserName() + " 加入讨论组");
+            Log.i("AppData","run start");
             while (true) {
                 if (socket.isConnected()) {
                     //Log.i("AppData","socket isConnected send");
                     if (!socket.isInputShutdown()) {
-                        Object obj = ois.readObject();
+                        obj = ois.readObject();
                         if (obj != null) {
-                            ChatMessage message = (ChatMessage) obj;
+                            messageGET = (ChatMessage) obj;
                             //notifyListData(message);
-                            Log.i("AppData",message.getMsg());
-                        } else {
-                            Log.i("AppData","obj == null");
+                            Log.i("AppData",messageGET.getMsg());
                         }
                     }
                 }
